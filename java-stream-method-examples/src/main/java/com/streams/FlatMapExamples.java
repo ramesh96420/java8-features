@@ -2,8 +2,7 @@ package com.streams;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 /*
  * @authorized by Rameshbabu
@@ -22,145 +21,96 @@ import java.util.stream.Collectors;
  * Collectors  is library in java and is having some free defined methods.
  * sum() we are using counting purpose and is also one Terminal operation and is return some integer value.
  * mapToInt() is return always integer type.
+ * findAny() is finding any value based on the above condition then stop the stream and return type is Optional.
+ * flatMap() we are using this to convert one type stream to another type stream and is return type always is stream. 
+ * Optional is a wrapper class is using to avoid the "NULL POINTER EXCEPTIONS"(runtime exception).
  * */
 
 public class FlatMapExamples {
 
 	public static void main(String[] args) {
 
-		List<String> names = Arrays.asList("Peter", "Sam", "Greg", "Ryan");
-		
-		//Imperative Style
-		System.out.println("Imperative Style");
-		System.out.println("Name is not equals Sam");
-		for (String name : names) {
-			if(!name.equals("Sam")){
-				User user = new User(name);
-				System.out.println(user);
-			}
-		}
-		System.out.println(".................");
-		System.out.println();
-		
+		List<User> users = Arrays.asList(
+				new User("Peter", 20, Arrays.asList("1", "2")),
+				new User("Sam", 30, Arrays.asList("4", "2")),
+				new User("Ryan", 25, Arrays.asList("6", "8")),
+				new User("Adam", 23, Arrays.asList("8", "20"))				
+				);
 		
 		/*
 		 * Functional Style using Streams API
-		 * name is not equals to Greg
-		 * 
-		 * */		
-		
-		System.out.println("Functional Style");					
-		//start function
-		System.out.println("Name is not equals Greg");
-		names.stream()
-			.filter(name -> !name.equals("Greg"))	//Check the condition the name is equals to "Greg" or not
-			/*.map(new Function<String, User>() {
-
-				@Override
-				public User apply(String name) {
-					User user = new User(name);
-					return user;
-				}
-			})*/
-			
-			//.map(name ->  new User(name))
-			.map(User::new)							//map() we are using to convert String type Object into User type Object.
-			.forEach(System.out::println);			//Print the User object
-		//end function
-		
-		System.out.println(".................");
-		System.out.println();
-		
-		
-		
-		/*
-		 * Functional Style using Streams API
-		 * name is not equals to Ryan
-		 * 
+		 *  
 		 * */
-						
-		//start function
-		System.out.println("Name is not equals Ryan");
-		names.stream()
-			//.filter(name -> isNotSam(name))
-			.filter(FlatMapExamples::isNotSam)		//Check the condition the name is equals to "Ryan" or not
-			/*.map(new Function<String, User>() {
+		
+		/*System.out.println("Functional Style");	
+		Optional<String> stringOptional= users.stream()
+			.map(new Function<User, Object>(){
 
 				@Override
-				public User apply(String name) {
-					User user = new User(name);
-					return user;
+				public Object apply(User user) {
+					return user.getPhoneNumbers();
 				}
-			})*/
-			
-			//.map(name ->  new User(name))
-			.map(User::new)							//map() we are using to convert String type Object into User type Object.
-			.forEach(System.out::println);			//Print the User object
-			
+				
+			})
+			.map(user -> user.getPhoneNumbers().stream())	//here inside user object having another list of phone numbers that the reason we called inside another stream
+			.flatMap(stringStream -> stringStream.filter(phoneNo -> phoneNo.equals("5")))
+			.findAny();									//if we find any value is 5 based on the above condition or the above condition is true than stop the Stream. 
+		
+		stringOptional.ifPresent(phno -> System.out.println(phno));	*/
 		
 		
-		System.out.println();
-		System.out.println("Convert String into User object and return that User object into List of User objects");
-	 //another stream operation
-		List<User> userList =names.stream()
-			.filter(FlatMapExamples::isNotSam)		//Check the condition the name is equals to "Ryan" or not
-			.map(User::new)							//map() we are using to convert String type Object into User type Object.
-			.collect(Collectors.toList());			//It is converting User object into List type and return the User object into List.
-		System.out.println(userList);
 		
 		
-		int sum = userList.stream()
-			  //.mapToInt(user -> user.getAge())	//is return use age.
-				.mapToInt(User::getAge)				//is return use age.
-				.sum();								//sum() method sum the all user ages and return the total age
-		System.out.println("Sum of the user age "+sum);
-	}
+		System.out.println("Functional Style");	
+		Optional<String> stringOptional= users.stream()
+			.map(user -> user.getPhoneNumbers().stream())	//here inside user object having another list of phone numbers that the reason we called inside another stream
+			.flatMap(stringStream -> stringStream.filter(phoneNo -> phoneNo.equals("2")))	//is convert user object stream to phone number stream and filter and check the condition than return into stream
+			.findAny();									//if we find any value is 5 based on the above condition or the above condition is true than stop the Stream. 
+		
+		//stringOptional.ifPresent(phno -> System.out.println(phno));		//the value is present than print the value(phone number).
+		stringOptional.ifPresent(System.out::println);
+		
+		
+		
+					
+	}	
 	
 	
-		private static boolean isNotSam(String name) {
-			return !name.equals("Ryan");
-		}
-		
-		//end function
-		
-		
-		
-		
-		
-		
-	//User Model Object
-	static class User{
-		
-		private String name;
-		private Integer age = 10;
-		
-		
-		public User(String name) {
-			this.name = name;
-		}
-		
-		
-		
-		public String getName() {
-			return name;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public Integer getAge() {
-			return age;
-		}
-		public void setAge(Integer age) {
-			this.age = age;
-		}
-
-		@Override
-		public String toString() {
-			return "User [name=" + name + ", age=" + age + "]";
-		}
-		
-		
+//User Model Object
+ static class User{
+	
+	private String name;
+	private Integer age;
+	private List<String> phoneNumbers;
+	public User(String name, Integer age, List<String> phoneNumbers) {
+		this.name = name;
+		this.age = age;
+		this.phoneNumbers = phoneNumbers;
 	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Integer getAge() {
+		return age;
+	}
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+	public List<String> getPhoneNumbers() {
+		return phoneNumbers;
+	}
+	public void setPhoneNumbers(List<String> phoneNumbers) {
+		this.phoneNumbers = phoneNumbers;
+	}
+	@Override
+	public String toString() {
+		return "User [name=" + name + ", age=" + age + ", phoneNumbers=" + phoneNumbers + "]";
+	}
+		
+	
+}
 
 }
