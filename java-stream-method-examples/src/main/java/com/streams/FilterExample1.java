@@ -25,7 +25,9 @@ public class FilterExample1 {
 				new User(null, 25, "za@gmail.com","Cyient" , Arrays.asList("6", "8")),
 				new User("Adam", 23,  "ra@gmail.com","Cyient" ,Arrays.asList("8", "20")),
 				new User("Manasa", 31,  "mana@gmail.com","Cyient" ,Arrays.asList("5", "70")),
-				new User("Manasa", 33,  "ma14@gmail.com","HSBC" ,Arrays.asList("50", "70"))
+				new User("Manasa", 33,  "ma14@gmail.com","HSBC" ,Arrays.asList("50", "70")),
+				new User(null, 30,  "m456@gmail.com","Infosys" ,Arrays.asList("5", "10")),
+				new User(null, 33,  "ma1@gmail.com","IBM" ,Arrays.asList("20", "90"))
 				);
 		
 		
@@ -42,12 +44,14 @@ public class FilterExample1 {
 		
 		//displaying the elements of the concatenated stream
 		opstream.forEach(System.out::println);
-		
+		System.out.println();
 		
 		
 			
 		
 		/*
+		 * Converting User object into Employee Object
+		 * After
 		 * Employee List by EmpName is Null
 		 *  
 		 * */
@@ -63,8 +67,33 @@ public class FilterExample1 {
 				.collect(Collectors.toList());
 		
 		System.out.println("Employee List by EmpName is Null: "+employeeListByEmpNameNull);
+		System.out.println();
+		
 		
 		/*
+		 * Converting User object into Employee Object
+		 * After
+		 * Employee List Filter null values after map
+		 *  
+		 * */
+		
+		List<Employee> employeeListByEmpNameNullAfterMap = users.stream()
+				.map(u -> new Employee(u.getName(),
+									   u.getAge(),
+									   u.getEmail(),
+									   u.getCompany(),
+									   u.getPhoneNumbers()))
+				.filter(u1 -> u1.getName()==null)
+				.collect(Collectors.toList());
+		
+		System.out.println("Employee List Filter null values after map : "+employeeListByEmpNameNullAfterMap);
+		System.out.println();
+		
+		
+		
+		/*
+		 * Converting User object into Employee Object
+		 * After
 		 * Employee List by EmpName is NotNull
 		 *  
 		 * */
@@ -78,8 +107,12 @@ public class FilterExample1 {
 				.collect(Collectors.toList());
 		
 		System.out.println("Employee List by EmpName is NotNull: "+employeeListByEmpNameNotNull);
+		System.out.println();
+		
 		
 		/*
+		 * Converting User object into Employee Object
+		 * After
 		 * Employee information by EmpName is NotNull and Company name is Cyient
 		 *  
 		 * */
@@ -93,8 +126,12 @@ public class FilterExample1 {
 									   u.getPhoneNumbers()))
 				.findAny();
 		System.out.println("Employee information by EmpName is NotNull and Company name is Cyient : "+optionalEmpInfo);
+		System.out.println();
+		
 		
 		/*
+		 * Converting User object into Employee Object
+		 * After
 		 * List of Employees information by EmpName is NotNull and Company name is Cyient
 		 *  
 		 * */
@@ -107,7 +144,7 @@ public class FilterExample1 {
 									   u.getPhoneNumbers()))
 				.collect(Collectors.toList());
 		System.out.println("List of Employees information by EmpName is NotNull and Company name is Cyient : "+listOfEmployees);
-							
+		System.out.println();				
 	}	
 	
 	
